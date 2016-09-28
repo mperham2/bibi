@@ -39,16 +39,25 @@ while True:
 
         # Receive the data in small chunks and retransmit it
         while True:
-            data = connection.recv(1024)
-            print >>sys.stderr, 'received "%s"' % data
-            if data:
+            program = connection.recv(1024)
+            print >>sys.stderr, 'received "%s"' % program
+            if program:
 
                 # start data handling here.
-                output = parser.parse(data)
-                print output
+                
+                # parse the program
+                parsed_program = parser.parse(program) # add PWD check
+                print parsed_program
+                
+                # save the program
+                             
+                # output = file storage module (parsed_program)
+                	#(returns json of json files for each action)
+                	#(uses additional module to read existing log)
+                                               	
 
                 print >>sys.stderr, 'sending data back to the client'
-                connection.sendall(str(output))
+                connection.sendall(str(parsed_program)) #change to output
                 break
             else:
                 print >>sys.stderr, 'no more data from', client_address
