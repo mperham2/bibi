@@ -1,32 +1,10 @@
 import socket
 import sys
+import parser
 
 PORT = sys.argv[1]
 PWD = sys.argv[2]
 
-
-# checking PORT values (repeat of bash)
-try:
-    PORT = int(PORT)
-except:
-    sys.exit("PORT value invalid")
-
-print type(PORT)
-
-if PORT > 1023:
-    if PORT < 65536:
-        pass
-    else:
-        sys.exit("PORT out of bounds")
-else:
-    sys.exit("PORT out of bounds")
-
-# check password
-
-
-
-
-print PORT, PWD
 
 # Create a TCP/IP socket
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -54,10 +32,11 @@ while True:
             if data:
 
                 # start data handling here.
-
+                output = parser.parse(data)
+                print output
 
                 print >>sys.stderr, 'sending data back to the client'
-                connection.sendall(data)
+                connection.sendall(str(output))
             else:
                 print >>sys.stderr, 'no more data from', client_address
                 break
