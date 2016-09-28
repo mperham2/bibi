@@ -6,13 +6,25 @@ PORT = sys.argv[1]
 PWD = sys.argv[2]
 
 
+# checking PORT values (repeat of bash)
+try:
+    PORT = int(PORT)
+except:
+    sys.exit("PORT value invalid")
+
+
 # Create a TCP/IP socket
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 # Bind the socket to the port
 server_address = ('localhost', PORT)
 print >>sys.stderr, 'starting up on %s port %s' % server_address
-sock.bind(server_address)
+
+try:
+    sock.bind(server_address)
+except:
+    print >>sys.stderr, 'port is busy'
+    sys.exit(63)
 
 # Listen for incoming connections
 sock.listen(1)
@@ -37,6 +49,7 @@ while True:
 
                 print >>sys.stderr, 'sending data back to the client'
                 connection.sendall(str(output))
+                break
             else:
                 print >>sys.stderr, 'no more data from', client_address
                 break
@@ -44,3 +57,4 @@ while True:
     finally:
         # Clean up the connection
         connection.close()
+        sys.exit(0)
