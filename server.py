@@ -46,11 +46,16 @@ while True:
                 # start data handling here.
                 
                 # parse the program
-                parsed_program = parser.parse(program) # add PWD check
+                parsed_program = parser.parse(program)
                 print parsed_program
                 
+                # add PWD check
+                #if parsed_program[2] != PWD: # if array has pwd as 3rd item
+                #    print >>sys.stderr, 'access denied: incorrect password'
+                #    sys.exit(1)
+                
                 # save the program
-                             
+                
                 # output = file storage module (parsed_program)
                 	#(returns json of json files for each action)
                 	#(uses additional module to read existing log)
