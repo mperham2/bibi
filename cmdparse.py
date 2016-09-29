@@ -12,10 +12,41 @@ as principal admin password "admin" do
    return y.f1
 ***
 
-You can then break it up as follows:
-as priniciple ...
-set ...
-return ...
+<prog> ::= as principal p password s do \n <cmd> ***
+re = ^as\s+principal\s+[A-Za-z][A-Za-z0-9_]*\s+password\s+[A-Za-z0-9_ ,;\.?!-]*\s+\\n(.)+(\\n)*\*\*\*$
+
+<cmd> ::= exit \n | return <expr> \n | <prim_cmd> \n <cmd>
+^\s*exit\s*\\n |
+
+<expr> ::=  <value> | [] | { <fieldvals> }
+<fieldvals> ::=  x = <value> | x = <value> , <fieldvals>
+<value> ::=  x | x . y | s
+[A-Za-z][A-Za-z0-9_]*
+[A-Za-z][A-Za-z0-9_]+.[A-Za-z][A-Za-z0-9_]+
+[A-Za-z0-9_ ,;\.?!-]*
+<prim_cmd> ::=
+          create principal p s
+          ^\s*create\s+principal\s+([A-Za-z][A-Za-z0-9_]*)\s+(.)*([A-Za-z0-9_ ,;\.?!-]*)\s*\\n
+        | change password p s
+        ^\s*change\s+password\s+([A-Za-z][A-Za-z0-9_]*)\s+(.)*([A-Za-z0-9_ ,;\.?!-]*)\s*\\n
+        | set x = <expr>
+        ^\s*set\s+
+        | append to x with <expr>
+        ^\s*append\s+to\s+([A-Za-z][A-Za-z0-9_]*)\s+with\s+(.)
+        | local x = <expr>
+        | foreach y in x replacewith <expr>
+        | set delegation <tgt> q <right> -> p
+        | delete delegation <tgt> q <right> -> p
+        | default delegator = p
+<tgt> ::= all | x
+<right> ::= read | write | append | delegate
+
+regex alternative
+
+as principal p password s do \n <cmd> ***
+(
+
+
 """
 
 from pyparsing import alphas, nums, dblQuotedString, Combine, Word, Group, delimitedList, Suppress, removeQuotes
