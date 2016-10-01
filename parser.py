@@ -52,12 +52,10 @@ as principal p password s do \n <cmd> ***
 import sys, re
 
 
-
-
-
 def check_program(password, program):
     program_re = re.compile("^as\s+principal\s+[A-Za-z][A-Za-z0-9_]*\s+password\s+\"[A-Za-z0-9_ ,;\.?!-]*\"\s+do\s*\n(.*\n*)*\*{3}$")
     if program_re.match(program):
+        print "program format is correct"
         check_pass(password, program)
     else:
         print >>sys.stderr, 'The program syntax is incorrect'
@@ -66,6 +64,8 @@ def check_program(password, program):
 def check_pass(password, program):
     cmdline_tokens = re.compile("^as\s+principal\s+([A-Za-z][A-Za-z0-9_])*\s+password\s+\"([A-Za-z0-9_ ,;\.?!-]*)\"\s+do")
     principal, cmd_pass = cmdline_tokens.match(program)
+    print "Server-set password: " + password
+    print "Command-line password: " + cmd_pass
     if cmd_pass != password:
        print >>sys.stderr, 'The password is incorrect'
        sys.exit(1)
@@ -88,9 +88,6 @@ class literal_token:
         self.value = int(value)
     def nud(self):
         return self.value
-
-
-class operator_cmdline_token
 
 
 class operator_add_token:

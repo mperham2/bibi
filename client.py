@@ -15,7 +15,13 @@ sock.connect(server_address)
 try:
 
     # Send data
-    message = '1+2'
+    message = "as        principal admin password \"admin\" do \
+create principal bob \"B0BPWxxd\" \
+        set x = \"my string\"     \
+       set y ={f1=x,f2=\"field2\"} \
+   set     delegation x admin read-> bob \
+   return y . f1 \
+***"
     print >>sys.stderr, 'sending "%s"' % message
     sock.sendall(message)
 
