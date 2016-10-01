@@ -1,4 +1,76 @@
+# parser.py
+#
+"""
+Parser for Command Language, of the form:
 
+as principal admin password "admin" do
+   create principal bob "B0BPWxxd"
+   set x = "my string"
+   set y = { f1 = x, f2 = "field2" }
+   set delegation x admin read -> bob
+   return y.f1
+***
+
+<prog> ::= as principal p password s do \n <cmd> ***
+re = ^as\s+principal\s+[A-Za-z][A-Za-z0-9_]*\s+password\s+[A-Za-z0-9_ ,;\.?!-]*\s+\\n(.)+(\\n)*\*\*\*$
+re = ^as\s+principal\s+[A-Za-z][A-Za-z0-9_]*\s+password\s+\"[A-Za-z0-9_ ,;\.?!-]*\"\s+do\s*\n(.*\n*)*\*{3}$
+^as\s+principal\s+([A-Za-z][A-Za-z0-9_])*\s+password\s+\"([A-Za-z0-9_ ,;\.?!-]*)\"\s+do
+<cmd> ::= exit \n | return <expr> \n | <prim_cmd> \n <cmd>
+^\s*exit\s*\\n |
+
+<expr> ::=  <value> | [] | { <fieldvals> }
+<fieldvals> ::=  x = <value> | x = <value> , <fieldvals>
+<value> ::=  x | x . y | s
+[A-Za-z][A-Za-z0-9_]*
+[A-Za-z][A-Za-z0-9_]+.[A-Za-z][A-Za-z0-9_]+
+[A-Za-z0-9_ ,;\.?!-]*
+<prim_cmd> ::=
+          create principal p s
+          ^\s*create\s+principal\s+([A-Za-z][A-Za-z0-9_]*)\s+(.)*([A-Za-z0-9_ ,;\.?!-]*)\s*\\n
+        | change password p s
+        ^\s*change\s+password\s+([A-Za-z][A-Za-z0-9_]*)\s+(.)*([A-Za-z0-9_ ,;\.?!-]*)\s*\\n
+        | set x = <expr>
+        ^\s*set\s+
+        | append to x with <expr>
+        ^\s*append\s+to\s+([A-Za-z][A-Za-z0-9_]*)\s+with\s+(.)
+        | local x = <expr>
+        | foreach y in x replacewith <expr>
+        | set delegation <tgt> q <right> -> p
+        | delete delegation <tgt> q <right> -> p
+        | default delegator = p
+<tgt> ::= all | x
+<right> ::= read | write | append | delegate
+
+regex alternative
+
+as principal p password s do \n <cmd> ***
+(
+
+
+"""
+
+import sys, re
+
+
+
+
+
+def check_program(password, program):
+    program_re = re.compile("^as\s+principal\s+[A-Za-z][A-Za-z0-9_]*\s+password\s+\"[A-Za-z0-9_ ,;\.?!-]*\"\s+do\s*\n(.*\n*)*\*{3}$")
+    if program_re.match(program):
+        check_pass(password, program)
+    else:
+        print >>sys.stderr, 'The program syntax is incorrect'
+        sys.exit(1)
+
+def check_pass(password, program):
+    cmdline_tokens = re.compile("^as\s+principal\s+([A-Za-z][A-Za-z0-9_])*\s+password\s+\"([A-Za-z0-9_ ,;\.?!-]*)\"\s+do")
+    principal, cmd_pass = cmdline_tokens.match(program)
+    if cmd_pass != password:
+       print >>sys.stderr, 'The password is incorrect'
+       sys.exit(1)
+    else:
+        pass
 
 def expression(rbp=0):
     global token
@@ -16,6 +88,9 @@ class literal_token:
         self.value = int(value)
     def nud(self):
         return self.value
+
+
+class operator_cmdline_token
 
 
 class operator_add_token:
@@ -42,11 +117,13 @@ class operator_div_token:
 class end_token:
     lbp = 0
 
-import re
-
 token_pat = re.compile("\s*(?:(\d+)|(.))")
 
 def tokenize(program):
+    # tokenize based on sequential commands
+    # need a storage system for the tokens
+    # need all the possible token types and variables
+
     for number, operator in token_pat.findall(program):
         if number:
             yield literal_token(number)
@@ -63,8 +140,10 @@ def tokenize(program):
     yield end_token()
 
 
-def parse(program):
+def parse(password, program):
+    check_program(password, program)
     global token, next
     next = tokenize(program).next
     token = next()
+    #need to return the format storage for instructions
     return expression()

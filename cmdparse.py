@@ -14,7 +14,8 @@ as principal admin password "admin" do
 
 <prog> ::= as principal p password s do \n <cmd> ***
 re = ^as\s+principal\s+[A-Za-z][A-Za-z0-9_]*\s+password\s+[A-Za-z0-9_ ,;\.?!-]*\s+\\n(.)+(\\n)*\*\*\*$
-
+re = ^as\s+principal\s+[A-Za-z][A-Za-z0-9_]*\s+password\s+\"[A-Za-z0-9_ ,;\.?!-]*\"\s+do\s*\n(.*\n*)*\*{3}$
+^as\s+principal\s+([A-Za-z][A-Za-z0-9_])*\s+password\s+\"([A-Za-z0-9_ ,;\.?!-]*)\"\s+do
 <cmd> ::= exit \n | return <expr> \n | <prim_cmd> \n <cmd>
 ^\s*exit\s*\\n |
 

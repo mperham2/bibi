@@ -46,13 +46,8 @@ while True:
                 # start data handling here.
                 
                 # parse the program
-                parsed_program = parser.parse(program)
+                parsed_program = parser.parse(PWD, program)
                 print parsed_program
-                
-                # add PWD check
-                #if parsed_program[2] != PWD: # if array has pwd as 3rd item
-                #    print >>sys.stderr, 'access denied: incorrect password'
-                #    sys.exit(1)
                 
                 # save the program
                 
